@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             # 'ros2bag-tool' = "wq"
+            "ros2bag-tool = ros2bag_convert.main:main",
         ],
     },
 )
