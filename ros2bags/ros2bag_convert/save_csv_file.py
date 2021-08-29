@@ -15,7 +15,7 @@ def save_csv_file(data, csv_file_name, version=0, print_out=False):
         field_names = ['topic_name', 'topic_type', 'time_stamp', 'message']
         writer = None
 
-        print("-------------------------------")
+        # print("-------------------------------")
         nt,line_datas  =  data[0],data[1]
         for index in range(len(line_datas)):
             row_time,row_data  = nt[index],line_datas[index]
@@ -27,7 +27,7 @@ def save_csv_file(data, csv_file_name, version=0, print_out=False):
             row_data["time"] = row_time
             # row_data = [row_time]+list(row_data.values())
             writer.writerow(row_data)
-            print(row_time,row_data)
+            # print(row_time,row_data)
 
             # print("-------------------------------")
             # print(line)
@@ -52,5 +52,5 @@ def save_csv_file(data, csv_file_name, version=0, print_out=False):
         #                             'time_stamp': data[i][2][j],
         #                             'message': data[i][3][j] })
 
-    if print_out:
-        print('Saving', csv_file_name)
+    # if print_out:
+    print('Saving', csv_file_name)
