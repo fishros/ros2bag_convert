@@ -311,7 +311,12 @@ def _is_field_type_binary_type_array(field_type):
 def _is_field_type_a_primitive_array(field_type):
     bracket_index = field_type.find('<')
     if bracket_index < 0:
-        return False
+        bracket_index = field_type.find('[')
+        if bracket_index < 0:
+             return False
+        else:
+             list_type = field_type[:field_type.index("[")]
+             return list_type in ros_primitive_types
     else:
         list_type = field_type[field_type.index("<")+1:-1]
         return list_type in ros_primitive_types
