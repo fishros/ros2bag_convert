@@ -60,5 +60,3 @@ ros2bag-convert xxxx.db3
 - 20210830-V0.1.0
   - Completed basic conversion function
   - Known bug: Data is not exported by hierarchical expansion
-
-Translated with www.DeepL.com/Translator (free version)
