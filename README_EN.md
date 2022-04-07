@@ -2,7 +2,7 @@
 
 [Chinese](README.md) | [English](README_EN.md)
 
-** Convert ROS2 Bag files to CSV, JSON, etc. **
+**Convert ROS2 Bag files to CSV, JSON, etc. **
 
 ## I. Installation
 
