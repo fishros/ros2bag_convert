@@ -5,8 +5,9 @@ from rosidl_runtime_py.utilities import get_message
 from rclpy.serialization import deserialize_message
 # import sys
 # sys.path.append("/home/ros2/rosbag2_csv/rosbag2/")
-from . import message_converter
+from . import message_converter, save_csv_file
 import json
+import os
 
 def connect(sqlite_file):
     """ Make connection to an SQLite database file. """
@@ -214,3 +215,31 @@ def read_from_all_topics(bag_file, print_out=False):
     close(connection)
 
     return data
+
+def read_write_from_all_topics(bag_file, print_out=False):
+    """ Returns all timestamps and messages from all topics.
+    """
+    # Connect to the database
+    connection, cursor = connect(bag_file)
+
+    # Get all topics names and types
+    topic_names = get_all_topics_names(cursor, print_out=False)
+    print(topic_names)
+    topic_types = get_all_msgs_types(cursor, print_out=False)
+
+    # Get all messages types
+    topic_types = get_all_msgs_types(cursor, print_out=False)
+
+    # Get all timestamps and messages for each topic
+    for i in range(len(topic_names)):
+        timestamps, messages = read_from_topic(bag_file, topic_names[i], print_out)
+        topic_name,topic_type = topic_names[i],topic_types[i]
+        tmp = topic_name.split("/")
+        path, topic_name = "/".join(tmp[:-1]),tmp[-1]
+        path = bag_file[:bag_file.rfind("/")]+""+path
+        os.makedirs(path, exist_ok=True)
+        save_csv_file.save_csv_file([timestamps, messages],path + "/" + topic_name+".csv")
+
+    # Close connection to the database
+    close(connection)
+

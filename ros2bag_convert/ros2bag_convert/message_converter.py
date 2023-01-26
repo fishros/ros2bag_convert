@@ -255,8 +255,14 @@ def _convert_from_ros_type(field_type, field_value):
         field_value = list(field_value)
     elif _is_field_type_an_array(field_type):
         field_value = _convert_from_ros_array(field_type, field_value)
+    elif field_type == np.ndarray or type(field_value) == np.ndarray:
+        print("Unsupported type: ", field_type)
+        return None
     else:
-        field_value = convert_ros_message_to_dictionary(field_value)
+        try:
+            field_value = convert_ros_message_to_dictionary(field_value)
+        except:
+            print("field_type: ", field_type)
 
     return field_value
 
