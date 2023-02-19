@@ -50,10 +50,8 @@ ros2bag-convert xxxx.db3
 ```
 
 ## Author.
-- [小鱼-公众号鱼香ROS](https://www.fishros.com)
 
-![img](http://tools.fishros.com/README/imgs/image-20210726192026520.png)
-
+- [小鱼-鱼香ROS](https://www.fishros.com)
 
 ## Version Record
 
