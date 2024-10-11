@@ -128,7 +128,7 @@ def get_all_msgs_types(cursor, print_out=False):
     msgsTypes = []
     # Get all records for 'topics'
     records = get_all_elements(cursor, 'topics', print_out=False)
-
+    
     # Save all message types
     for row in records:
         msgsTypes.append(row[2])  # 2 is for message type TODO
@@ -137,6 +137,7 @@ def get_all_msgs_types(cursor, print_out=False):
         print(msgsTypes)
 
     return msgsTypes
+
 
 def get_msg_type(cursor, topic_name, print_out=False):
     """ Returns the message from specific topic.
@@ -154,6 +155,7 @@ def get_msg_type(cursor, topic_name, print_out=False):
         print('\nMessage type in', topic_name, 'is', msg_type)
 
     return msg_type
+
 
 def read_from_topic(bag_file, topic_name, print_out=False):
     """ Returns all timestamps and messages from specific topic.
@@ -176,18 +178,21 @@ def read_from_topic(bag_file, topic_name, print_out=False):
     # Get message type
     msg_type = get_message(type_map[topic_name])
 
-    # Deserialize messages
-    messages = []
-    for i in range(len(messages_cdr)):
-        # messages.append(deserialize_message(messages_cdr[i], msg_type))
-        msg = deserialize_message(messages_cdr[i], msg_type)
-        dic_data = message_converter.convert_ros_message_to_dictionary(msg)
-        messages.append(dic_data)
-    if print_out:
-        print(len(messages_cdr), 'messages deserialized from ', topic_name)
+    try:
+        # Deserialize messages
+        messages = []
+        for i in range(len(messages_cdr)):
+            # messages.append(deserialize_message(messages_cdr[i], msg_type))
+            msg = deserialize_message(messages_cdr[i], msg_type)
+            dic_data = message_converter.convert_ros_message_to_dictionary(msg)
+            messages.append(dic_data)
+        if print_out:
+            print(len(messages_cdr), 'messages deserialized from ', topic_name)
 
-    # Close connection to the database
-    close(connection)
+        # Close connection to the database
+        close(connection)
+    except:
+        print("failed to deserialize messages")
 
     return timestamps, messages
 
@@ -216,6 +221,26 @@ def read_from_all_topics(bag_file, print_out=False):
 
     return data
 
+def flatten_dict(d, parent_key='', sep='_'):
+    """
+    unfold sub-structs, except struct array
+    """
+    items = []
+    i = 0
+    for key, val in d.items(): 
+        new_key = f"{parent_key}{sep}{key}" if parent_key else key
+        if isinstance(val, dict):
+            items.extend(flatten_dict(val, new_key, sep=sep).items())
+        elif isinstance(val, list):
+            for val_i in val:
+                items.append((new_key + '_' + str(i), val_i))
+                i += 1
+        else:
+            items.append((new_key, val))
+        i = 0
+    return dict(items) 
+
+
 def read_write_from_all_topics(bag_file, print_out=False):
     """ Returns all timestamps and messages from all topics.
     """
@@ -224,8 +249,6 @@ def read_write_from_all_topics(bag_file, print_out=False):
 
     # Get all topics names and types
     topic_names = get_all_topics_names(cursor, print_out=False)
-    print(topic_names)
-    topic_types = get_all_msgs_types(cursor, print_out=False)
 
     # Get all messages types
     topic_types = get_all_msgs_types(cursor, print_out=False)
@@ -238,7 +261,11 @@ def read_write_from_all_topics(bag_file, print_out=False):
         path, topic_name = "/".join(tmp[:-1]),tmp[-1]
         path = bag_file[:bag_file.rfind("/")]+""+path
         os.makedirs(path, exist_ok=True)
-        save_csv_file.save_csv_file([timestamps, messages],path + "/" + topic_name+".csv")
+        res = []
+        for i in messages:
+            res.append(flatten_dict(i)) 
+        
+        save_csv_file.save_csv_file([timestamps, res],path + "/" + topic_name+".csv")
 
     # Close connection to the database
     close(connection)
