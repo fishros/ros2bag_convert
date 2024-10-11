@@ -9,7 +9,7 @@
 命令行安装：
 
 ```
-sudo pip install ros2bag_convert
+sudo pip install git+https://github.com/fishros/ros2bag_convert.git
 ```
 
 下载安装：
