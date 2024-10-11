@@ -9,7 +9,7 @@
 Command line installation.
 
 ```
-sudo pip install ros2bag_convert
+sudo pip install git+https://github.com/fishros/ros2bag_convert.git
 ```
 
 Download and install.
